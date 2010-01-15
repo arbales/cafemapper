@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CafeMapper Test</title>
+  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/reset/reset-min.css">
+  <link rel="stylesheet" href="css/example.css">
+  <script src="lib/dominoes.c.js"></script>    
+  <script>
+    dominoes.property( "Prototype" , "./lib/prototype.c.js");
+    dominoes.property( "Patches" , "./lib/patch.js");
+    dominoes.property( "Json" , "./js/json2.c.js");
+    dominoes.property( "ActiveSupport" , "./js/active_support.js");
+    dominoes( "${Prototype} > ${Patches} > ${Json} ${ActiveSupport} >| ./cafemapper.js", function(){
+      CafeMapper.activate();
+      Booking = CafeMapper.Model.initAs("Booking")
+    });
+  </script>
+</head>
+<body>
+  <div id="main">
+    <h1>CafeMapper</h1>
+    <p class="opening">CafeMapper is a simple localStorage ORM.</p>
+    <p class="opening faded">It can synchronize with server storage.</p>
+    <p class="opening faded">A la carte.</p>
+    <p>Binds data objects with simple eventing
+      to keep your displayed elements in-sync with your local and remote data stores. DataMapper in mind.</p>
+  </div>
+
+</body>
+</html>

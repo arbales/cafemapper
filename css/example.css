@@ -1,0 +1,26 @@
+html {
+border-top:4px solid #FF4900;
+color: #222;
+font-family: 'Helvetica Neue', Helvetica, Arial;
+font-size: 28px;
+}
+h1,h2,h3,h4,h5 {
+	font-weight:bold;
+	margin:1em 0em;
+}
+h1 {
+	background-color:#FF4900;
+	color:#fff;
+	display:inline-block;
+	padding:10px;
+	margin-left:-10px;
+}
+#main {
+width: 720px;
+margin: auto;
+padding: 20px;
+} 
+
+p.opening {font-size:28px;clear:both;width:100%;}
+p.faded{color:rgba(0,0,0,.40);}
+p {font-size:20px;float:left;width:50%;margin:.5ex 0ex;}

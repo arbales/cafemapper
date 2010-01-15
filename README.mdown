@@ -1,0 +1,10 @@
+#CafeMapper
+CafeMapper is/will-be a simple localStorge ORM at base. 
+
+- Thin object wrapper for localStorage
+- Loose revision tracking for objects
+- Sync via JSON to server datasource discretely or as a set. 
+- Feels comfortable with your server-side DataMapper.
+- [dominoes](http://github.com/jaubourg/dominoes/) for Javascript loading/scheduling.
+
+CafeMapper is being rewritten from existing (poorer) code. I'm by no means an expert, so feedback/corrections/issues are welcome. 
