@@ -1,29 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CafeMapper Test</title>
-  <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.8.0r4/build/reset/reset-min.css">
+  <title>CafeMapper</title>
+  <link rel="stylesheet" type="text/css" href="css/reset.css">
   <link rel="stylesheet" href="css/example.css">
   <script src="lib/dominoes.c.js"></script>    
   <script>
     dominoes.property( "Prototype" , "./lib/prototype.c.js");
-    dominoes.property( "Patches" , "./lib/patch.js");
-    dominoes.property( "Json" , "./js/json2.c.js");
-    dominoes.property( "ActiveSupport" , "./js/active_support.js");
-    dominoes( "${Prototype} > ${Patches} > ${Json} ${ActiveSupport} >| ./cafemapper.js", function(){
+    dominoes.property( "Patches" , "./lib/patch.js" + "?"+new Date().valueOf());
+    dominoes.property( "Json" , "./lib/json2.c.js");
+    dominoes.property( "ActiveSupport" , "./lib/active_support.js");
+    dominoes.property( "LivePipe" , "./lib/livepipe.c.js");
+    dominoes({chain: "${Prototype} > ${Patches} > ${Json} ${ActiveSupport} >| ./cafemapper.js" + "?"+new Date().valueOf(), cache: false}, function(){
       CafeMapper.activate();
-      Booking = CafeMapper.Model.initAs("Booking")
+      
+      Booking = $MODEL("Booking");
+      
+      // (optional) Add the ServerCommunication module.
+      Booking.include(CafeMapper.ServerCommunication);
+      CafeMapper.element.observe("refreshing:booking.1", function(){
+        $('logger').insert("<li>Updated: Booking.1</li>");
+      });
+      // (optional) Define a stub for newly created objects.
+      Booking.stub = {name: "John Smith", id: 10};
     });
   </script>
 </head>
 <body>
   <div id="main">
-    <h1>CafeMapper</h1>
-    <p class="opening">CafeMapper is a simple localStorage ORM.</p>
+    <h1>Caf&eacute;Mapper</h1>
+    <p class="opening">Caf&eacute;Mapper is a simple localStorage ORM.</p>
     <p class="opening faded">It can synchronize with server storage.</p>
     <p class="opening faded">A la carte.</p>
+    <div class="clear vspace"></div>
     <p>Binds data objects with simple eventing
       to keep your displayed elements in-sync with your local and remote data stores. DataMapper in mind.</p>
+    <div class="clear"></div>
+    <ul id="logger">
+    </ul>
   </div>
 
 </body>

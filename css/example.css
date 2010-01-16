@@ -12,14 +12,21 @@ h1 {
 	background-color:#FF4900;
 	color:#fff;
 	display:inline-block;
-	padding:10px;
-	margin-left:-10px;
+	padding:10px 15px;
+	margin-left:-15px; 
+	-webkit-border-radius:1em; 
+	font-size:34px;
+	text-shadow:rgba(0,0,0,.05) 0px .15ex .15ex;
 }
 #main {
 width: 720px;
 margin: auto;
 padding: 20px;
-} 
+}
+                 
+#logger {padding-top:12px;border-top:1px dotted rgba(0,0,0,.15);margin-top:12px;font-size:13px;font-weight:bold;color:rgba(0,0,0,.5);}
+.clear{clear:both;} 
+.vspace{height:28px;}
 
 p.opening {font-size:28px;clear:both;width:100%;}
 p.faded{color:rgba(0,0,0,.40);}
