@@ -16,7 +16,7 @@ h1 {
 	margin-left:-15px; 
 	-webkit-border-radius:1em; 
 	font-size:34px;
-	text-shadow:rgba(0,0,0,.05) 0px .15ex .15ex;
+	text-shadow:rgba(0,0,0,.) 0px .25ex .25ex;
 }
 #main {
 width: 720px;

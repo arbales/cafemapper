@@ -33,17 +33,34 @@ CafeMapper.DataObject = Class.create({
 		    this.refresh(this);
 		}
 	},
+	identify: function(){
+	   	if (!this.id){return this.model.uuid} else {return this.id}
+	},
 	store: function(){
+    	this._store();
+		CafeMapper.element.fire("stored:"+this.model.klass.toLowerCase()+"."+this.id);
+	},
+	Store: function(){
+		this._store();
+	},
+	_store: function(){
 		if (this.id != undefined){
 			return localStorage.setItem(this.model.klass+'.'+this.id, JSON.stringify(this));
 		}else{
 			return localStorage.setItem(this.model.klass+'.'+this.model.uuid, JSON.stringify(this));
 		}
-	},
+	}
 
 });
 
 CafeMapper.ServerCommunication = {
+	receiveUpdate: function(data){
+		Object.extend(this, data);
+		this._expires_at = (1).minutes().fromNow().toString();
+		this.expires_at = Date.parse(this._expires_at);
+		this.store();
+		$('app_element').fire("updated:"+this.model.klass.toLowerCase()+"."+this.id);
+	},
 	refresh: function(){                                                      
 		CafeMapper.DataObject.refresh(this);
 		CafeMapper.element.fire("refreshing:"+this.model.klass.toLowerCase()+"."+this.id); 
@@ -64,7 +81,16 @@ CafeMapper.ElementMethods = {
 		$('app_element').observe(("updated:reservation."+id), function(){
 			Reservation.update_element(id, elementid);
 		});
-	}	
+	},
+	update_element: function(element){
+		var tag = element.tagName.toLowerCase();
+		var f = this['render_'+tag].bind(this);
+		if (typeof f == "function"){
+			element.update(f());        
+		} else {
+			console.warn("Unable to update Element#id:" + element.identify()+". " + this.model.klass + "#render_"+tag+ "() is not defined.");
+		}
+	},	
 };
 
 CafeMapper.Model.initAs = function(klass, options){     
@@ -93,7 +119,7 @@ CafeMapper.DataObject.refresh = function(dobject){
 		method: "get",
 		onSuccess: function(transport){
 			var data = transport.responseText.evalJSON();
-			booking.receiveUpdate(data);
+			dobject.receiveUpdate(data);
 		},
 		onFailure: function(){
 			console.warn("Unable to refresh object.");

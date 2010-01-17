@@ -14,22 +14,30 @@
     dominoes({chain: "${Prototype} > ${Patches} > ${Json} ${ActiveSupport} >| ./cafemapper.js" + "?"+new Date().valueOf(), cache: false}, function(){
       CafeMapper.activate();
       
-      Booking = $MODEL("Booking");
+      Person = $MODEL("Person",{
+        render_li: function(){
+          return "Name: " + this.name + " Zipcode: " + this.zipcode;  
+        }
+      });
       
       // (optional) Add the ServerCommunication module.
-      Booking.include(CafeMapper.ServerCommunication);
-      CafeMapper.element.observe("refreshing:booking.1", function(){
-        $('logger').insert("<li>Updated: Booking.1</li>");
+      Person.include(CafeMapper.ServerCommunication);
+      Person.include(CafeMapper.ElementMethods);
+
+      // Simple logging example.
+      CafeMapper.element.observe("refreshing:person.1", function(){
+        $('logger').insert("<li>Updated: Person.1</li>");
       });
+
       // (optional) Define a stub for newly created objects.
-      Booking.stub = {name: "John Smith", id: 10};
+      Person.stub = {name: "John Smith", id: 1, zipcode: 20744};
     });
   </script>
 </head>
 <body>
   <div id="main">
-    <h1>Caf&eacute;Mapper</h1>
-    <p class="opening">Caf&eacute;Mapper is a simple localStorage ORM.</p>
+    <h1>CafeMapper</h1>
+    <p class="opening" id="tagline">CafeMapper is a simple localStorage ORM.</p>
     <p class="opening faded">It can synchronize with server storage.</p>
     <p class="opening faded">A la carte.</p>
     <div class="clear vspace"></div>
