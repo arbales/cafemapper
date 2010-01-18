@@ -8,3 +8,26 @@ CafeMapper is/will-be a simple localStorge ORM at base.
 - [dominoes](http://github.com/jaubourg/dominoes/) for Javascript loading/scheduling.
 
 CafeMapper is being rewritten from existing (poorer) code. I'm by no means an expert, so feedback/corrections/issues are welcome. 
+
+## Quick Start
+Include cafemapper.js with dominoes (as shown in example.html) or just by using <script> tags.
+
+To create a new Model, you simply:
+    
+    var Person = $MODEL("Person");
+
+You can also use the long, namespaced synax:
+
+    var Person = CafeMapper.Model.initAs("Person");
+
+### Creating Stubs
+CafeMapper lets you define stubs to populate empty/new objects with, rather than having to set it yourself. You could also define this type of behavior by creating your own CafeMapper.DataObject.initialize method and calling $super().
+
+    var Person = $MODEL("Person", {
+       initialize: function($super, data){
+          this.name = "John Smith";
+          this.zipcode = "20744";
+       }
+    });
+
+    Person.stub = {name: "John Smith" zipcode: 20744};
