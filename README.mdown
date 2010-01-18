@@ -20,6 +20,13 @@ You can also use the long, namespaced synax:
 
     var Person = CafeMapper.Model.initAs("Person");
 
+### Server Synchronization
+CafeMapper allows for (initially) basic client/server object synchronization. Before the final release, a hash of DataObject id's will be maintained so that the server can provide unprompted updates to the client. For now, you can have CafeMapper request an update after it is expired. CafeMapper will request a JSON serialized object from your server and then apply it to the local copy.
+
+    Person.include(CafeMapper.Modules.ServerCommunication);
+
+This defines several feature and callback methods on `Person` such as `Person#refresh`, which triggers the server update flow.
+
 ### Creating Stubs
 CafeMapper lets you define stubs to populate empty/new objects with, rather than having to set it yourself. You could also define this type of behavior by creating your own CafeMapper.DataObject.initialize method and calling $super().
 
