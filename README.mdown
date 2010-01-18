@@ -1,5 +1,5 @@
 #CafeMapper
-CafeMapper is/will-be a simple localStorge ORM at base. 
+CafeMapper is/will-be a simple localStorge ORM at base. You can certainly try to use it now, but things will be rough. Watch the project though, very soon it'll be at a usable state.
 
 - Thin object wrapper for localStorage
 - Loose revision tracking for objects
