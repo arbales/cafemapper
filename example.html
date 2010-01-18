@@ -7,11 +7,11 @@
   <script src="lib/dominoes.c.js"></script>    
   <script>
     dominoes.property( "Prototype" , "./lib/prototype.c.js");
-    dominoes.property( "Patches" , "./lib/patch.js" + "?"+new Date().valueOf());
+    dominoes.property( "Kieffer" , "./lib/kieffer.js" + "?"+new Date().valueOf());
     dominoes.property( "Json" , "./lib/json2.c.js");
     dominoes.property( "ActiveSupport" , "./lib/active_support.js");
     dominoes.property( "LivePipe" , "./lib/livepipe.c.js");
-    dominoes({chain: "${Prototype} > ${Patches} > ${Json} ${ActiveSupport} >| ./cafemapper.js" + "?"+new Date().valueOf(), cache: false}, function(){
+    dominoes({chain: "${Prototype} > ${Kieffer} > ${Json} ${ActiveSupport} >| ./cafemapper.js" + "?"+new Date().valueOf(), cache: false}, function(){
       CafeMapper.activate();
       
       Person = $MODEL("Person",{
@@ -21,8 +21,8 @@
       });
       
       // (optional) Add the ServerCommunication module.
-      Person.include(CafeMapper.ServerCommunication);
-      Person.include(CafeMapper.ElementMethods);
+      Person.include(CafeMapper.Modules.ServerCommunication);
+      Person.include(CafeMapper.Modules.ElementMethods);
 
       // Simple logging example.
       CafeMapper.element.observe("refreshing:person.1", function(){
@@ -36,7 +36,7 @@
 </head>
 <body>
   <div id="main">
-    <h1>CafeMapper</h1>
+    <h1><img src="images/logo.png" /></h1>
     <p class="opening" id="tagline">CafeMapper is a simple localStorage ORM.</p>
     <p class="opening faded">It can synchronize with server storage.</p>
     <p class="opening faded">A la carte.</p>
