@@ -40,8 +40,17 @@ CafeMapper.DataObject = Class.create({
     	this._store();
 		CafeMapper.element.fire("stored:"+this.model.klass.toLowerCase()+"."+this.id);
 	},
-	Store: function(){
+	STORE: function(){
 		this._store();
+	},               
+	_save: function(){
+		
+	},
+	save: function(){
+		this._save();
+	},
+	SAVE: function(){
+		
 	},
 	_store: function(){
 		if (this.id != undefined){
@@ -107,7 +116,12 @@ CafeMapper.Model.initAs = function(klass, options){
 	c.get = CafeMapper.DataObject.get
 	c.createStub = CafeMapper.DataObject.createStub
 	c.initObjectWithData = CafeMapper.DataObject.initObjectWithData
-	c.include = c.addMethods
+	c.include = function(klass){
+		if (typeof klass.includer == "function"){
+			klass.includer();
+		}
+		c.addMethods(klass);
+	}
 	return c
 }
 
