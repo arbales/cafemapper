@@ -18,6 +18,12 @@
  * The CafeMapper namespace.
  **/
 var CafeMapper = Class.create();
+  /**
+   * CafeMapper.activate() -> null
+   *  
+   * Generates the `__barista__` element for powering events.
+   * 
+   **/
   CafeMapper.activate = function(){
     if (!$('__barista__')){
       var e = new Element("div", {id: "__barista__"});
@@ -26,14 +32,15 @@ var CafeMapper = Class.create();
       CafeMapper.element = e;
     }
   };  
-    
-    /** section: Library, alias of: Kieffer.uuid
-     * CafeMapper.generate_uuid() -> String
-     * 
-     * Returns a universal unique identifier for use in a `DataObject`
-     *  without an `id` property for storage and reference. Thanks to
-     *  Mr. Kieffer for 
-     **/
+  
+  /** section: Library, alias of: Kieffer.uuid
+   * CafeMapper.generate_uuid() -> String
+   * 
+   * Returns a universal unique identifier for use in a `DataObject`
+   *  without an `id` property for storage and reference. Thanks to
+   *  Mr. Kieffer's uuid generation function. 
+   *  
+   **/
     CafeMapper.generate_uuid = Kieffer.uuid
     
   /** section: Library
@@ -65,14 +72,27 @@ var CafeMapper = Class.create();
     /**
      * CafeMapper.DataObject#identify -> String
      * 
-     *  Returns either the objects ID or its UUID
+     *  Returns either the objects ID or its model.UUID.
      * 
      **/         
-    identify: function(){if (!this.id){return this.model.uuid;} else {return this.id;}},
-    store: function(){
-      this._store();
-      CafeMapper.element.fire("stored:"+this.model.klass.toLowerCase()+"."+this.id);
+     identify: function(){if (!this.id){return this.model.uuid;} else {return this.id;}},
+    /**
+     * CafeMapper.DataObject#store() -> null
+     * 
+     * Has the `DataObject` committed to the localStorage database.
+     * 
+     **/
+     store: function(){
+       this._store();
+       CafeMapper.element.fire("stored:"+this.model.klass.toLowerCase()+"."+this.id);
+       return null;
     },
+    /**
+     * CafeMapper.DataObject#STORE() -> null
+     * 
+     * Persists the `DataObject` to localStorage, bypassing any normal hooks. 
+     * 
+     **/
     STORE: function(){this._store();},               
     _save: function(){},
     save: function(){this._save();},
@@ -132,30 +152,73 @@ var CafeMapper = Class.create();
   $MODEL = CafeMapper.DataObject.initAs;   
       
     /**
-     * CafeMapper.DataObject.initWithData(data) -> Object
+     * CafeMapper.DataObject.initWithData(data) -> DataObject
      *  - data (Object): Bla
      * 
-     * Creates a `DataObject`
+     * Creates a `DataObject` based on the `data` provided and then calls
+     *  [[CafeMapper.DataObject#store()]]. Returns the instance of `DataObject`
      * 
      **/         
-
     CafeMapper.DataObject.initObjectWithData = function(data){
       var o = new this(data);
       o.store();
       return o;
-    }; 
+    };
+    
+    CafeMapper.DataObject.stub = {}; 
 
-    CafeMapper.DataObject.createStub = function(id){ 
+    /** related to: CafeMapper.DataObject.initWithData
+     * CafeMapper.DataObject.createStub() -> DataObject
+     * 
+     * Creates an `DataObject` with the information specified in 
+     *  your model's stub. You can defined a stub like so:
+     *  
+     *      var Person = $MODEL("Person");
+     *      Person.stub = {name: "John Doe", zipcode: 20646};
+     *  
+     *  Then, one can easily: 
+     *  
+     *      p = Person.createStub(); // #<Person name:"John Doe" zipcode:20646>
+     * 
+     **/
+    CafeMapper.DataObject.createStub = function(){ 
       return this.initObjectWithData(this.stub);
     }; 
-
+    /**
+     * CafeMapper.DataObject.include(klass) -> null
+     * - klass (Class): The set of methods to be included
+     * 
+     *  Loads modules into DataObjects by calling `Object#addMethods()`,
+     * and also calles the `includer()` function. 
+     * 
+     **/
     CafeMapper.DataObject.include = function(klass){
       if (typeof klass.includer == "function"){
         klass.includer();
       }
       this.addMethods(klass);
+      return null;
     };
 
+    /**
+     * CafeMapper.DataObject.get(id) -> DataObject || null
+     * - id (Integer): A id number to lookup given the class name.
+     *  
+     *  Pulls a record from the localStorage database. The table rows
+     *  are identified according to the following formula:
+     *  
+     *      var Person = $MODEL('Person')l
+     *      p = Person.get(5);
+     *  
+     *  This looks for record identified by `Person.5`. This requires that
+     *  `Person` have an `id` property. If the property is not detected, a UUID
+     *  will be generated and assigned to `CafeMapper.DataObject#model.id`. 
+     *  In this case, the record can be retreived like:
+     *  
+     *      p = Person.get("9421E9B6-5EC1-4F01-A8E0-0FB963BE807E");
+     *  
+     * 
+     **/
     CafeMapper.DataObject.get = function(id){ 
        var data = JSON.parse(localStorage.getItem(this.klassName+'.'+id));
       if (data === null){
