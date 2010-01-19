@@ -21,8 +21,8 @@
       });
       
       // (optional) Add the ServerCommunication module.
-      Person.include(CafeMapper.Modules.ServerCommunication);
-      Person.include(CafeMapper.Modules.ElementMethods);
+      Person.include(CafeMapper.DataObject.ServerCommunication);
+      Person.include(CafeMapper.DataObject.ElementMethods);
 
       // Simple logging example.
       CafeMapper.element.observe("refreshing:person.1", function(){

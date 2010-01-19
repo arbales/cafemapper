@@ -7,12 +7,13 @@
  *--------------------------------------------------------------------------*/
                        
 /**
- * == Main ==
+ * == Library ==
  * 
- * Main functions.
+ * CafeMapper is a (hopefully) lightweight storage system for HTML's localStorage system.
+ *  It can optionally be connected to a server-side data store.
  **/
 
-/** section: Main
+/** section: Library
  * class CafeMapper
  * The CafeMapper namespace.
  **/
@@ -25,36 +26,24 @@ var CafeMapper = Class.create();
       CafeMapper.element = e;
     }
   };  
-
-    CafeMapper.Model = {};
-    CafeMapper.Model.generate_uuid = function(){
-       return Kieffer.uuid();
-    };
-
-    CafeMapper.Model.initAs = function(klass, options){     
-        var _options = {
-        model: {
-          klass: klass,
-          serverPrefix: ""
-        }
-      };
-      Object.extend(_options, options);
-      _options.model.klass = klass;
-      var c = Class.create(CafeMapper.DataObject, _options);
-      c.klassName = klass;
-      c.get = CafeMapper.DataObject.get;
-      c.createStub = CafeMapper.DataObject.createStub;
-      c.initObjectWithData = CafeMapper.DataObject.initObjectWithData;
-      c.include = CafeMapper.DataObject.include;
-      return c;
-    };
-
-    $MODEL = CafeMapper.Model.initAs;
-
-  /** section: Main
+    
+    /** section: Library, alias of: Kieffer.uuid
+     * CafeMapper.generate_uuid() -> String
+     * 
+     * Returns a universal unique identifier for use in a `DataObject`
+     *  without an `id` property for storage and reference. Thanks to
+     *  Mr. Kieffer for 
+     **/
+    CafeMapper.generate_uuid = Kieffer.uuid
+    
+  /** section: Library
    * class CafeMapper.DataObject
+   *  includes CafeMapper.DataObject.ServerCommunication, CafeMapper.DataObject.ElementMethods
    * 
-   * Bla
+   *  An instance `DataObject` is the workhorse of CafeMapper.
+   *  It represents a single record with attached properties.
+   *  DataObjects are created by a call to [[DataMapper.Model.initAs]] or
+   *  it's alias [[$MODEL]]
    **/      
       
   CafeMapper.DataObject = Class.create({
@@ -66,7 +55,7 @@ var CafeMapper = Class.create();
         this._expires_at = (1).minutes().fromNow().toString();
         this.expires_at = Date.parse(this._expires_at);
       }
-      if (!this.id){this.model.uuid = CafeMapper.Model.generate_uuid();}
+      if (!this.id){this.model.uuid = CafeMapper.generate_uuid();}
                 
       // If the the object has expired, refresh it.
       if (this.expires_at < new Date() && (typeof this.refresh == 'function')){
@@ -97,7 +86,51 @@ var CafeMapper = Class.create();
     }
 
   });
+  
+    /**
+     * CafeMapper.DataObject.initAs(klassname, options) -> Class
+     *  - klassname (String): The name of the klass as you'd like CafeMapper to track
+     *  it. 
+     *  - options (Hash): These options will be merged into 
+     *  
+     * This method generates a new Model class. You may assign
+     *  a variable to it. As per
+     *  
+     *      var Person = CafeMapper.DataObject.initAs("Person");
+     *      
+     * for your convencience, this is aliased as:[[$MODEL]].
+     **/   
+      CafeMapper.DataObject.initAs = function(klassname, options){     
+          var _options = {
+          model: {
+            klass: klassname,
+            serverPrefix: ""
+          }
+        };
+        Object.extend(_options, options);
+        _options.model.klass = klassname;
+        _options.model.serverPrefix = "";
+  //      var args = $A(arguments);
+  //      args[0] = CafeMapper.DataObject;
+  //      args[1] = _options;
 
+        var c = Class.create(CafeMapper.DataObject, _options);
+
+        // I can't get this to work.
+        //var c = Class.create().curry(args);
+        c.klassName = klassname;
+        c.get = CafeMapper.DataObject.get;
+        c.createStub = CafeMapper.DataObject.createStub;
+        c.initObjectWithData = CafeMapper.DataObject.initObjectWithData;
+        c.include = CafeMapper.DataObject.include;
+        return c;
+      };
+  
+  /** section: Library, alias of: CafeMapper.DataObject.initAs
+   *  $MODEL(klassname, options) -> Class
+   **/
+  $MODEL = CafeMapper.DataObject.initAs;   
+      
     /**
      * CafeMapper.DataObject.initWithData(data) -> Object
      *  - data (Object): Bla
@@ -132,15 +165,10 @@ var CafeMapper = Class.create();
       }
     };
 
-/** section: Main
- * CafeMapper.Modules
- * This is the modules namespace. 
- **/
-CafeMapper.Modules = {}
- /** 
- * mixin CafeMapper.Modules.ServerCommunication
+/** 
+ * mixin CafeMapper.DataObject.ServerCommunication
  * 
- * `CafeMapper.Modules.ServerCommunication` provides a set of instance methods
+ * `CafeMapper.DataObject.ServerCommunication` provides a set of instance methods
  * to [[CafeMapper.DataObject]]s that enable communication with a server-side
  * data store.
  *  
@@ -149,9 +177,9 @@ CafeMapper.Modules = {}
  * classes.
  * 
  **/     
-CafeMapper.Modules.ServerCommunication = {
+CafeMapper.DataObject.ServerCommunication = {
   /**
-   * CafeMapper.Modules.ServerCommunication#receiveUpdate(data) -> String
+   * CafeMapper.DataObject.ServerCommunication#receiveUpdate(data) -> String
    *  - data (Object): A dataset to be merged into the `DataObject`.
    *  
    * Does somthing
@@ -168,7 +196,13 @@ CafeMapper.Modules.ServerCommunication = {
       CafeMapper.element.fire("refreshing:"+this.model.klass.toLowerCase()+"."+this.id); 
     }
   }; 
-
+               
+/** section: Library
+ * CafeMapper.Modules
+ * Right now, this just contains the `ElementMethods` module.
+ **/
+CafeMapper.Modules = {}    
+  
 /** 
  * mixin CafeMapper.Modules.ElementMethods
  *
@@ -191,24 +225,67 @@ CafeMapper.Modules.ServerCommunication = {
       $('app_element').observe(("updated:reservation."+id), function(){
         Reservation.update_element(id, elementid);
       });
-    },
+    }
+  };
+  
+/**
+ * mixin CafeMapper.DataObject.ElementMethods
+ * 
+ * Provides instance methods on `DataObjects` for interacting with
+ *  an `Element`. This methods are made available on [[CafeMapper.DataObject]]s when
+ *  [[CafeMapper.DataObject.include]] is called with `CafeMapper.DataObject.ElementMethods`.
+ *  
+ *  <h5> For example </h5>
+ *  
+ *      var Person = $MODEL("Person");
+ *      Person.include(CafeMapper.DataObject.ElementMethods);
+ *  
+ *  using `DataObject.include()` will automatically tigger the additon of the module,
+ *  but also the calling of `CafeMapper.DataObject.ElementMethods.onInclude()`, which 
+ *  in this case adds [[CafeMapper.Modules.ElementMethods]] to `Element`.
+ *      
+ **/  
+  CafeMapper.DataObject.ElementMethods = {
+    /**
+     * CafeMapper.DataObject.ElementMethods.update_element(element) -> Boolean
+     * - element (Element): The element to provide an update to.
+     * 
+     * The element's `tagName` will be detected and then
+     * will attempt to call `DataObject#render_#{tagName}()`
+     *  if the function exists, the result will be passed to
+     *  `Element#update()`.
+     * 
+     **/
     update_element: function(element){
       var tag = element.tagName.toLowerCase();
       var f = this['render_'+tag].bind(this);
       if (typeof f == "function"){
-        element.update(f());        
+        element.update(f()); 
+        return true;       
       } else {
         if (typeof console == "object"){console.warn("Unable to update Element#id:" + element.identify()+". " + this.model.klass + "#render_"+tag+ "() is not defined.");}
+        return false;
       }
     }
   };     
 
-  CafeMapper.DataObject.refresh = function(dobject){
-    return new Ajax.Request(dobject.model.serverPrefix+'/'+dobject.model.klass.toLowerCase()+"/"+dobject.id+".json", {
+  /**
+   * CafeMapper.DataObject.refresh(dataObject) -> Ajax.Request
+   * - dataObject (Object): The instance of `DataObject` to conduct the refresh operation on.
+   * 
+   * This class method initiates the Ajax-driven request cycle.
+   * It is customarily called by [[CafeMapper.DataObject#refresh]],
+   * and is automatically made available when running `DataObject.include(CafeMapper.DataObject.ServerCommunication)`.
+   *  
+   * The class method is available for your convenience.
+   * 
+   **/ 
+  CafeMapper.DataObject.refresh = function(dataObject){
+    return new Ajax.Request(dataObject.model.serverPrefix+'/'+dataObject.model.klass.toLowerCase()+"/"+dataObject.id+".json", {
       method: "get",
       onSuccess: function(transport){
         var data = transport.responseText.evalJSON();
-        dobject.receiveUpdate(data);
+        dataObject.receiveUpdate(data);
       },
       onFailure: function(){
         console.warn("Unable to refresh object.");

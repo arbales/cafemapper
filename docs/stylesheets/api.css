@@ -87,7 +87,7 @@ code {
   top: 0;
   bottom: 0;
   right: 0;
-  left: 241px;
+  left: 286px;
   overflow-y: scroll;
   overflow-x: auto;
 }
@@ -487,9 +487,10 @@ p.related-to {
   top: 0;
   bottom: 0;
   left: 0;
-  width: 240px;
+  width: 280px;
   background: #fff;
-  font-size: 13px;
+  font-size: 11px;
+  color:#000;
 }
 
 #sidebar form.search-ribbon {
@@ -634,14 +635,14 @@ p.related-to {
   top: 32px;
   bottom: 0;
   left: 0;
-  width: 239px;
+  width: 284px;
   border-right: 1px solid #636363;
   overflow-y: scroll;
   overflow-x: hidden;
 }
 
 #search_pane {
-  width: 239px;
+  width: 284px;
   border-right: 1px solid #636363;
   position: absolute;
   top: 32px;
@@ -657,7 +658,7 @@ p.related-to {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 239px;
+    width: 284px;
   }
   
 #search {
