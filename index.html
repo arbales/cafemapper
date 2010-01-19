@@ -8,16 +8,34 @@
 <body>
   <div id="main">
     <h1><img src="images/logo.png" /></h1>
-    <p class="opening" id="tagline">CafeMapper is a simple localStorage ORM.</p>
+    
+		<p class="opening" id="tagline">CafeMapper is a simple localStorage ORM.</p>
     <p class="opening faded">It can synchronize with server storage.</p>
     <p class="opening faded">A la carte.</p>
-    <div class="clear vspace"></div>
-    <p>Binds data objects with simple eventing
+    
+		<div class="clear vspace"></div>
+    
+		<div class="half">
+<pre>
+var Person = $MODEL("Person");
+var p = new Person({id: 4, name: 'Jon Smith', zipcode: 20646});
+p.store();</pre>    
+		</div>
+		
+		<div class="full minor code">
+<pre>d = Person.get(4);</pre>
+    </div>
+    
+		<p>
+      Binds data objects with simple eventing
       to keep your displayed elements in-sync with your local and remote data stores. DataMapper in mind.</p>
-    <div class="clear"></div>
-    <ul id="logger">
-    </ul>
+    
+	 <p class="minor">
+      CafeMapper isn't finished yet, and the API will change constantly. Don't use CafeMapper (at all).</p>
+    <div class="clear vspace"></div>
+    <p class="minor" style="width:65%">The source for CafeMapper is at <a href="http://arbales.github.com/cafemapper">github.com/arbales/cafemapper</a>.</p>
+    <p class="minor" style="width:35%">The PDoc documentation is <a href="http://arbales.github.com/cafemapper/docs">right here</a>.</p>
   </div>
-
+<a href="http://github.com/arbales"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
 </body>
 </html>
