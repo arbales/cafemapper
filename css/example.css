@@ -1,0 +1,32 @@
+html {
+border-top:4px solid #401C0F;
+color: #280E02;
+font-family: 'Helvetica Neue', Helvetica, Arial;
+font-size: 28px;
+background-color:#FDF1EB;
+}
+h1,h2,h3,h4,h5 {
+	font-weight:bold;
+	margin:1em 0em;
+}
+h1 {
+	color:#fff;
+	display:inline-block;
+	margin-left:-5px; 
+	-webkit-border-radius:1em; 
+	font-size:34px;
+	text-shadow:rgba(0,0,0,.) 0px .25ex .25ex;
+}
+#main {
+width: 720px;
+margin: auto;
+padding: 20px;
+}
+                 
+#logger {padding-top:12px;border-top:1px dotted rgba(0,0,0,.15);margin-top:12px;font-size:13px;font-weight:bold;color:rgba(0,0,0,.5);}
+.clear{clear:both;} 
+.vspace{height:28px;}
+
+p.opening {font-size:28px;clear:both;width:100%;}
+p.faded{color:rgba(0,0,0,.40);}
+p {font-size:20px;float:left;width:50%;margin:.5ex 0ex;}
