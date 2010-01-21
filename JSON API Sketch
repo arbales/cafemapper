@@ -1,0 +1,96 @@
+// POST: Saving a Booking
+
+{
+  model: {klass:"Booking", uuid:"0505-ABC-9235"},
+  person: "Person+0101-ABC-5678",
+  tables: [10,11],
+  time: NZJuly102001,
+  objects: [
+    {
+     model: {klass: "Person", uuid: "0101-ABC-5678"}
+     name: "Austin Bales"
+     phone: 3015556226
+    }
+  ]
+}                    
+
+// Returns: The Booking was saved.
+/*
+ * Response is received by hander.
+ *                                                                                     
+ *  Examines objects store, looking for Booking+0505-ABC-9325.
+ *  Applies this update to the request object. Since it now has an ID it is saved with one. 
+ *  Also sees Person+0505-ABC-9325. It is also resaved with it's ID matching the booking's reference.
+ *  The handler creates elements and links them to the saved models.
+ *   
+ *  
+ */  
+{
+  response: "true",
+  explained: "Booking saved. Confirmation: 0505-ABC-9325.".
+  objects: [{
+      model: {klass:"Person", uuid: "0505-ABC-9325", id:83},
+      name: "Austin Bales",
+      phone: 3015556226,
+      created_on: NZJuly102001
+    },
+    {
+      model: {klass:"Booking", uuid: "0505-ABC-9325", id:108},
+      person: "Person.108", // Note the change in reference.
+      tables: [10,11],
+      time: NZJuly102001,
+      expires: 0102040034321
+    }],
+  drop: ["Person+0101-ABC-5678","Booking+0505-ABC-9325"], // Drop these from the record since an ID-based record has been saved. 
+  
+} 
+
+// Returns: Booking not saved, person saved.
+/*
+ * Response is received by hander.
+ *  
+ *  False: Displays message                                                                                   
+ *  Examines objects store. Merges changes from the response into the  Booking object.
+ *  Also sees Person+0505-ABC-9325. It is also resaved with it's ID matching the booking's reference.
+ *  The handler tells the forms to update with new data. 
+ *  
+ */
+{
+  response: false,
+  explained: "The booking was not saved becuase the table was taken.",
+  objects: [{
+      model: {klass:"Person", uuid: "0505-ABC-9325", id:83},
+      name: "Austin Bales",
+      phone: 3015556226,
+      created_on: NZJuly102001
+    },  
+    {
+        model: {klass:"Booking", uuid: "0505-ABC-9325"},
+        person: "Person.108", // Note the change in reference.
+      }
+  
+}  
+
+
+// Returns: 403 Forbidden. You tried to get a person from a different organization.
+/*
+ *  The handler sees a failure.
+ *  Displays an error message.  
+ *     
+ */
+ 
+ {
+   explained: "You don't have access to that Person."   
+ }
+ 
+// Returns: 401 Not Authorized. Dangerous action or logged out, the user needs to re-auth now.
+/*
+*  The handler sees a failure.
+*  Displays an error message. 
+*  Calls App.suspend(); and shows relogin window. 
+*     
+*/
+
+{
+  explained: "You've been logged out due to inactivity."   
+}  
