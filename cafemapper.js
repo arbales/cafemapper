@@ -76,34 +76,56 @@ var CafeMapper = Class.create();
      * 
      **/         
      identify: function(){if (!this.id){return this.model.uuid;} else {return this.id;}},
+     /**
+      * CafeMapper.DataObject#reference -> String
+      * 
+      * Returns either `Object.id` or `Object+uuid` as a string, used for the datastore.
+      * 
+      **/
+     reference: function(){
+       if (!this.id){
+         return this.model.klass + "+" + this.model.uuid;
+       } else {
+         return this.model.klass + "." + this.model.id;
+       }    
+     },
     /**
      * CafeMapper.DataObject#store() -> null
      * 
      * Has the `DataObject` committed to the localStorage database.
      * 
      **/
-     store: function(){
-       this._store();
-       CafeMapper.element.fire("stored:"+this.model.klass.toLowerCase()+"."+this.id);
-       return null;
+     store: function(cond){
+       if (cond == true){
+         this._store();
+         return true;      
+       } else {
+         this._store();
+         CafeMapper.element.fire("stored:"+this.reference());
+         return null;         
+       }
     },
-    /**
-     * CafeMapper.DataObject#STORE() -> null
-     * 
-     * Persists the `DataObject` to localStorage, bypassing any normal hooks. 
-     * 
-     **/
-    STORE: function(){this._store();},               
-    _save: function(){},
-    save: function(){this._save();},
-    SAVE: function(){},
-    _store: function(){
-      if (this.id !== undefined){
-        return localStorage.setItem(this.model.klass+'.'+this.id, JSON.stringify(this));
-      }else{
-        return localStorage.setItem(this.model.klass+'.'+this.model.uuid, JSON.stringify(this));
+      _store: function(){
+        if (this.id !== undefined){
+          return localStorage.setItem(this.model.klass+'.'+this.id, JSON.stringify(this));
+        }else{
+          return localStorage.setItem(this.model.klass+'.'+this.model.uuid, JSON.stringify(this));
+        }
+      },     
+   
+    save: function(cond){
+      if (cond == true){
+        this._save();
+        return true;     
+      } else {
+        this._save();
+        CafeMapper.element.fire("saved:"+this.reference());
+        return null;
       }
-    }
+    },
+      _save: function(){
+        var req = new Ajax.Request();
+      }
 
   });
   
@@ -181,8 +203,14 @@ var CafeMapper = Class.create();
      *      p = Person.createStub(); // #<Person name:"John Doe" zipcode:20646>
      * 
      **/
-    CafeMapper.DataObject.createStub = function(){ 
-      return this.initObjectWithData(this.stub);
+    CafeMapper.DataObject.createStub = function(id){
+      if (id !== undefined){
+        var o = this.initObjectWithData(this.stub);
+        o.id = id;
+        return o;
+      }else{ 
+        return this.initObjectWithData(this.stub);
+      }
     }; 
     /**
      * CafeMapper.DataObject.include(klass) -> null
@@ -222,7 +250,7 @@ var CafeMapper = Class.create();
     CafeMapper.DataObject.get = function(id){ 
        var data = JSON.parse(localStorage.getItem(this.klassName+'.'+id));
       if (data === null){
-        return this.stub(id);
+        return this.createStub(id);
       } else {
         return this.initObjectWithData(data);
       }
